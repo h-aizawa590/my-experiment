@@ -1,0 +1,120 @@
+!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心理学実験室</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* カスタムスタイルの追加 */
+        body {
+            background-color: #f3f4f6; /* 薄いグレー */
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 2rem;
+        }
+
+        .start-button {
+            background-color: #3b82f6; /* 青色 */
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+
+        .start-button:hover {
+            background-color: #2563eb;
+        }
+
+        .start-button:active {
+            transform: scale(0.98);
+        }
+
+        /* アラートの代わりとなるカスタムメッセージボックス用 */
+        #custom-alert {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            z-index: 1000;
+            text-align: center;
+            min-width: 300px;
+        }
+
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="title">心理学実験室へようこそ</h1>
+        <button id="startBtn" class="start-button">実験を開始する</button>
+    </div>
+
+    <!-- カスタムメッセージボックス（ブラウザのalert()はiframeで制限される場合があるため） -->
+    <div id="overlay"></div>
+    <div id="custom-alert">
+        <p style="font-size: 1.5rem; margin-bottom: 1.5rem;">Hello World!</p>
+        <button id="closeBtn" style="background: #ef4444; color: white; padding: 0.5rem 1.5rem; border-radius: 0.25rem;">閉じる</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const startBtn = document.getElementById('startBtn');
+            const customAlert = document.getElementById('custom-alert');
+            const overlay = document.getElementById('overlay');
+            const closeBtn = document.getElementById('closeBtn');
+
+            // 実験開始ボタンのクリックイベント
+            startBtn.addEventListener('click', () => {
+                // 通常のalertの代わりを表示
+                customAlert.style.display = 'block';
+                overlay.style.display = 'block';
+                console.log("Hello World!");
+            });
+
+            // 閉じるボタンのクリックイベント
+            closeBtn.addEventListener('click', () => {
+                customAlert.style.display = 'none';
+                overlay.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
