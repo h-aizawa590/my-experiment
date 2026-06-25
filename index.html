@@ -113,11 +113,12 @@
             border-radius: 2px;
         }
 
-        /* 実験リスト配置（1カラム中央寄せ） */
+        /* 実験リスト配置（2カラムのグリッドレイアウトに変更し全カードを均等配置） */
         .experiment-grid {
-            display: block;
-            max-width: 500px;
-            margin: 0 auto 4rem auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 4rem;
         }
 
         /* 実験カード */
@@ -127,7 +128,9 @@
             padding: 2.5rem 2rem;
             box-shadow: var(--shadow-md);
             transition: var(--transition);
-            display: block;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             border: 1px solid rgba(30, 58, 138, 0.05);
             position: relative;
             overflow: hidden;
@@ -187,11 +190,15 @@
             font-size: 0.95rem;
             color: var(--text-muted);
             margin-bottom: 2rem;
+            flex-grow: 1;
         }
 
         /* ボタンコンテナ */
         .btn-container {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: auto;
         }
 
         /* ボタン共通スタイル */
@@ -202,7 +209,7 @@
             box-sizing: border-box;
         }
 
-        /* メインボタン（実験参加） */
+        /* メインボタン（実験参加・閲覧） */
         .btn {
             display: block;
             padding: 1rem 1.5rem;
@@ -213,7 +220,6 @@
             border-radius: 8px;
             box-shadow: var(--shadow-sm);
             transition: var(--transition);
-            margin-bottom: 0.75rem;
             border: 2px solid transparent;
         }
 
@@ -233,7 +239,6 @@
             padding: 0.75rem 1.5rem;
             font-size: 0.95rem;
             transition: var(--transition);
-            margin-bottom: 0.75rem;
         }
 
         .btn-sub:hover {
@@ -250,11 +255,17 @@
             text-decoration: underline;
             transition: var(--transition);
             padding: 0.25rem 0;
-            margin-top: 0.5rem;
+            margin-top: 0.25rem;
         }
 
         .history-link:hover {
             color: var(--primary-orange);
+        }
+
+        /* ダミー用の非表示スペース（プレレジ等のないカードの高さを揃える補助パーツ） */
+        .spacer-placeholder {
+            height: calc(0.75rem + 2px + 1.4rem); /* サブボタンやリンクがない時の高さ調整用 */
+            visibility: hidden;
         }
 
         /* フッター */
@@ -293,6 +304,7 @@
             .experiment-grid {
                 max-width: 100%;
                 padding: 0 0.5rem;
+                gap: 1.5rem;
             }
 
             .experiment-card {
@@ -316,6 +328,39 @@
             
             <div class="experiment-grid">
                 
+                <article class="experiment-card">
+                    <div class="card-header">
+                        <span class="card-tag">基礎</span>
+                        <h3 class="card-title">実験0：はじめてのWebページ</h3>
+                        <p class="card-description">第2回で作成した記念すべき「Hello World」のページです。</p>
+                    </div>
+                    <div class="btn-container">
+                        <a href="hello_world.html" class="btn">Hello Worldを見る</a>
+                    </div>
+                </article>
+
+                <article class="experiment-card">
+                    <div class="card-header">
+                        <span class="card-tag">認知心理学（所要約3分）</span>
+                        <h3 class="card-title">実験1：ストループ課題</h3>
+                        <p class="card-description">「文字の意味」と「文字の色」の干渉を調べる、簡単なキーボード入力のテストです。</p>
+                    </div>
+                    <div class="btn-container">
+                        <a href="stroop.html" class="btn">実験1に参加する</a>
+                    </div>
+                </article>
+
+                <article class="experiment-card">
+                    <div class="card-header">
+                        <span class="card-tag">知覚心理学（所要約2分）</span>
+                        <h3 class="card-title">実験2：ミュラー・リヤー錯視</h3>
+                        <p class="card-description">図形の長さが違って見える錯覚を測る、スライダーを使った視覚のテストです。</p>
+                    </div>
+                    <div class="btn-container">
+                        <a href="muller_lyer_final.html" class="btn">実験2に参加する</a>
+                    </div>
+                </article>
+
                 <article class="experiment-card">
                     <div class="card-header">
                         <span class="card-tag">認知心理学（本番用・所要約5分）</span>
