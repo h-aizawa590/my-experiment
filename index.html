@@ -114,12 +114,13 @@
             border-radius: 2px;
         }
 
-        /* 実験リスト（グリッドレイアウト） */
+        /* 実験リスト（中央配置用に1カラム・最大幅を制限） */
         .experiment-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: 1fr;
+            max-width: 500px;
+            margin: 0 auto 4rem auto;
             gap: 2.5rem;
-            margin-bottom: 4rem;
         }
 
         /* 実験カード */
@@ -151,7 +152,7 @@
         }
 
         .experiment-card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-4px);
             box-shadow: var(--shadow-hover);
             border-color: rgba(249, 115, 22, 0.2);
         }
@@ -195,7 +196,7 @@
             flex-grow: 1;
         }
 
-        /* ボタン（アニメーション付き） */
+        /* ボタンコンテナ（縦並び配置） */
         .btn-container {
             margin-top: auto;
             display: flex;
@@ -203,6 +204,7 @@
             gap: 0.75rem;
         }
 
+        /* メインボタン（実験参加） */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -227,180 +229,3 @@
         .btn::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--primary-orange);
-            z-index: -1;
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s ease-out;
-        }
-
-        .btn:hover {
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
-        }
-
-        .btn:hover::before {
-            transform: scaleX(1);
-        }
-
-        /* プレレジ用の白抜きサブボタン */
-        .btn-sub {
-            background-color: transparent;
-            color: var(--primary-blue);
-            border: 2px solid rgba(30, 58, 138, 0.3);
-            box-shadow: none;
-            padding: 0.75rem 1.5rem;
-            font-size: 0.95rem;
-        }
-
-        .btn-sub::before {
-            background-color: rgba(30, 58, 138, 0.05);
-        }
-
-        .btn-sub:hover {
-            color: var(--primary-blue);
-            border-color: var(--primary-blue);
-            box-shadow: none;
-        }
-
-        /* 変更履歴用のテキストリンクスタイル */
-        .history-link {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            text-decoration: underline;
-            transition: var(--transition);
-            padding: 0.25rem 0;
-            margin-top: 0.25rem;
-        }
-
-        .history-link:hover {
-            color: var(--primary-orange);
-            transform: translateY(-1px);
-        }
-
-        /* フッター */
-        footer {
-            background-color: #0f172a;
-            color: #94a3b8;
-            padding: 3rem 0;
-            text-align: center;
-            font-size: 0.85rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        footer p {
-            margin-bottom: 0.5rem;
-        }
-
-        /* レスポンシブ調整（モバイル） */
-        @media (max-width: 768px) {
-            header {
-                padding: 4rem 0 3rem 0;
-            }
-
-            header h1 {
-                font-size: 1.75rem;
-                padding: 0 1rem;
-            }
-
-            .header-sub {
-                font-size: 0.95rem;
-            }
-
-            main {
-                padding: 3rem 0;
-            }
-
-            .experiment-grid {
-                gap: 1.5rem;
-            }
-
-            .experiment-card {
-                padding: 2rem 1.5rem;
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="container">
-            <h1>尚絅学院大学 （相澤脩貴）の心理学実験室</h1>
-            <p class="header-sub">ご訪問ありがとうございます。以下の実験へのご協力をお願いいたします。各実験は数分で終わります。スマートフォンからも参加可能です。</p>
-        </div>
-    </header>
-
-    <main>
-        <div class="container">
-            <h2 class="section-title">実施中のプログラム</h2>
-            
-            <div class="experiment-grid">
-                
-                <article class="experiment-card">
-                    <div class="card-header">
-                        <span class="card-tag">基礎</span>
-                        <h3 class="card-title">実験0：はじめてのWebページ</h3>
-                        <p class="card-description">第2回で作成した記念すべき「Hello World」のページです。</p>
-                    </div>
-                    <div class="btn-container">
-                        <a href="hello_world.html" class="btn">Hello Worldを見る</a>
-                    </div>
-                </article>
-
-                <article class="experiment-card">
-                    <div class="card-header">
-                        <span class="card-tag">認知心理学（所要約3分）</span>
-                        <h3 class="card-title">実験1：ストループ課題</h3>
-                        <p class="card-description">「文字の意味」と「文字の色」の干渉を調べる、簡単なキーボード入力のテストです。</p>
-                    </div>
-                    <div class="btn-container">
-                        <a href="stroop.html" class="btn">実験1に参加する</a>
-                    </div>
-                </article>
-
-                <article class="experiment-card">
-                    <div class="card-header">
-                        <span class="card-tag">知覚心理学（所要約2分）</span>
-                        <h3 class="card-title">実験2：ミュラー・リヤー錯視</h3>
-                        <p class="card-description">図形の長さが違って見える錯覚を測る、スライダーを使った視覚のテストです。</p>
-                    </div>
-                    <div class="btn-container">
-                        <a href="muller_lyer_final.html" class="btn">実験2に参加する</a>
-                    </div>
-                </article>
-
-                <article class="experiment-card">
-                    <div class="card-header">
-                        <span class="card-tag">認知心理学（本番用・所要約5分）</span>
-                        <h3 class="card-title">実験3：Nバック課題</h3>
-                        <p class="card-description">ワーキングメモリ（作業記憶）の能力を測定する、連続的な記憶認知テストです。</p>
-                    </div>
-                    <div class="btn-container">
-                        <a href="n_back.html" class="btn">実験に参加する</a>
-                        
-                        <a href="https://github.com/h-aizawa590/my-experiment/blob/main/preregistration.md" target="_blank" rel="noopener noreferrer" class="btn btn-sub">プレレジを確認する</a>
-                        
-                        <a href="https://github.com/h-aizawa590/my-experiment/commits/main/preregistration.md" target="_blank" rel="noopener noreferrer" class="history-link">⏱ 変更履歴（証拠）を確認する</a>
-                    </div>
-                </article>
-
-            </div>
-        </div>
-    </main>
-
-    <footer>
-        <div class="container">
-            <p>尚絅学院大学 心理学実験ポータル</p>
-            <p>&copy; 2026 Shokei Gakuin University. All Rights Reserved.</p>
-        </div>
-    </footer>
-
-</body>
-</html>
