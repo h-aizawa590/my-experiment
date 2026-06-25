@@ -11,7 +11,7 @@
         /* デザインシステム・変数の定義 */
         :root {
             --primary-blue: #1e3a8a;       /* 信頼感を与える濃い青 */
-            --primary-orange: #f97316;     /* 活バツさと温かみのあるオレンジ */
+            --primary-orange: #f97316;     /* 活発さと温かみのあるオレンジ */
             --bg-light: #f8fafc;           /* クリーンな背景用グレー */
             --text-dark: #1e293b;          /* 視認性の高いダークグレー */
             --text-muted: #64748b;         /* 補助テキスト用グレー */
@@ -57,7 +57,6 @@
             border-bottom: 5px solid var(--primary-orange);
         }
 
-        /* ヘッダーの装飾用背景グラデーション */
         header::before {
             content: "";
             position: absolute;
@@ -114,10 +113,234 @@
             border-radius: 2px;
         }
 
-        /* 実験リスト（中央配置用に1カラム・最大幅を制限） */
+        /* 実験リスト配置（1カラム中央寄せ） */
         .experiment-grid {
-            display: grid;
-            grid-template-columns: 1fr;
+            display: block;
             max-width: 500px;
             margin: 0 auto 4rem auto;
-            gap
+        }
+
+        /* 実験カード */
+        .experiment-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            display: block;
+            border: 1px solid rgba(30, 58, 138, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .experiment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-orange));
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+
+        .experiment-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(249, 115, 22, 0.2);
+        }
+
+        .experiment-card:hover::before {
+            height: 6px;
+            opacity: 1;
+        }
+
+        .card-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .card-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            background-color: rgba(30, 58, 138, 0.08);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+        }
+
+        .experiment-card:hover .card-tag {
+            color: var(--primary-orange);
+            background-color: rgba(249, 115, 22, 0.08);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+        }
+
+        .card-description {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        /* ボタンコンテナ */
+        .btn-container {
+            display: block;
+        }
+
+        /* ボタン共通スタイル */
+        .btn, .btn-sub, .history-link {
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+            box-sizing: border-box;
+        }
+
+        /* メインボタン（実験参加） */
+        .btn {
+            display: block;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #ffffff;
+            background-color: var(--primary-blue);
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            margin-bottom: 0.75rem;
+            border: 2px solid transparent;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-orange);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+        }
+
+        /* プレレジ用の白抜きサブボタン */
+        .btn-sub {
+            display: block;
+            background-color: transparent;
+            color: var(--primary-blue);
+            border: 2px solid rgba(30, 58, 138, 0.3);
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            margin-bottom: 0.75rem;
+        }
+
+        .btn-sub:hover {
+            color: var(--primary-blue);
+            border-color: var(--primary-blue);
+            background-color: rgba(30, 58, 138, 0.05);
+        }
+
+        /* 変更履歴用のテキストリンク */
+        .history-link {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-decoration: underline;
+            transition: var(--transition);
+            padding: 0.25rem 0;
+            margin-top: 0.5rem;
+        }
+
+        .history-link:hover {
+            color: var(--primary-orange);
+        }
+
+        /* フッター */
+        footer {
+            background-color: #0f172a;
+            color: #94a3b8;
+            padding: 3rem 0;
+            text-align: center;
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        /* レスポンシブ調整（モバイル） */
+        @media (max-width: 768px) {
+            header {
+                padding: 4rem 0 3rem 0;
+            }
+
+            header h1 {
+                font-size: 1.75rem;
+                padding: 0 1rem;
+            }
+
+            .header-sub {
+                font-size: 0.95rem;
+            }
+
+            main {
+                padding: 3rem 0;
+            }
+
+            .experiment-grid {
+                max-width: 100%;
+                padding: 0 0.5rem;
+            }
+
+            .experiment-card {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1>尚絅学院大学 （相澤脩貴）の心理学実験室</h1>
+            <p class="header-sub">ご訪問ありがとうございます。以下の実験へのご協力をお願いいたします。実験は数分で終わります。スマートフォンからも参加可能です。</p>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <h2 class="section-title">実施中のプログラム</h2>
+            
+            <div class="experiment-grid">
+                
+                <article class="experiment-card">
+                    <div class="card-header">
+                        <span class="card-tag">認知心理学（本番用・所要約5分）</span>
+                        <h3 class="card-title">本番実験：Nバック課題</h3>
+                        <p class="card-description">ワーキングメモリ（作業記憶）の能力を測定する、連続的な記憶認知テストです。</p>
+                    </div>
+                    <div class="btn-container">
+                        <a href="https://h-aizawa590.github.io/my-experiment/nback.html" class="btn">実験に参加する</a>
+                        
+                        <a href="https://github.com/h-aizawa590/my-experiment/blob/main/preregistration.md" target="_blank" rel="noopener noreferrer" class="btn btn-sub">プレレジを確認する</a>
+                        
+                        <a href="https://github.com/h-aizawa590/my-experiment/commits/main/preregistration.md" target="_blank" rel="noopener noreferrer" class="history-link">⏱ 変更履歴（証拠）を確認する</a>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>尚絅学院大学 心理学実験ポータル</p>
+            <p>&copy; 2026 Shokei Gakuin University. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
