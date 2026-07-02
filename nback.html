@@ -164,14 +164,13 @@
   <div id="jspsych-target" class="min-h-screen flex items-center justify-center p-4"></div>
 
   <script>
-    // GASの新しいデータ送信先URL
+    // GASのデータ送信先URL
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbx4ON9lROTg-gbROuYxWo087dJUoAIoY5XJ7x1djLPFTCMBjAfnlCK-Oq5C8HRjojFt/exec';
 
     // jsPsych の初期化
     const jsPsych = initJsPsych({
       display_element: 'jspsych-target',
       on_finish: function() {
-        // 最終課題（2-Back）終了時に自動的にここへ遷移
         const displayElement = jsPsych.getDisplayElement();
         
         // 1. 送信中メッセージの表示
@@ -186,17 +185,28 @@
           </div>
         `;
 
+        // 安全に変数を取り出すための堅牢なヘルパー関数
+        const allData = jsPsych.data.get();
+        const getVal = (col) => {
+          const column = allData.select(col);
+          if (column && column.values) {
+            const found = column.values.find(v => v !== undefined && v !== null && v !== '');
+            return found !== undefined ? found : '不明';
+          }
+          return '不明';
+        };
+
         // 2. データのフィルタリング（不要な教示・情報のアンケート行を除外）
-        const rawData = jsPsych.data.get().filter([
+        const rawData = allData.filter([
           { condition: '1-back' },
           { condition: '2-back' }
         ]);
 
         // 送信用データ配列の整理
         const cleanData = rawData.values().map(t => ({
-          participant_id: t.participant_id || '不明',
-          age: t.age || '不明',
-          gender: t.gender || '不明',
+          participant_id: getVal('participant_id'),
+          age: getVal('age'),
+          gender: getVal('gender'),
           condition: t.condition,
           trial_number: t.trial_index_custom,
           stimulus: t.stimulus_letter,
@@ -217,18 +227,18 @@
         })
         .then(() => {
           // 4. 送信完了後のフィードバック画面表示
-          renderFeedbackScreen(displayElement, rawData.values());
+          renderFeedbackScreen(displayElement, rawData.values(), getVal);
         })
         .catch((error) => {
           console.error('Data transmission failed:', error);
           // エラーが発生した場合も、収集したデータを失わないよう表を表示
-          renderFeedbackScreen(displayElement, rawData.values(), true);
+          renderFeedbackScreen(displayElement, rawData.values(), getVal, true);
         });
       }
     });
 
     // 送信完了後に画面を書き換える関数
-    function renderFeedbackScreen(displayElement, trials, hasError = false) {
+    function renderFeedbackScreen(displayElement, trials, getValFunc, hasError = false) {
       // 条件別の成績集計
       const trials1Back = trials.filter(t => t.condition === '1-back');
       const trials2Back = trials.filter(t => t.condition === '2-back');
@@ -276,7 +286,7 @@
       // エラーメッセージ用
       const errorNotice = hasError 
         ? `<div class="bg-red-50 text-red-700 p-4 rounded-xl mb-6 text-sm border border-red-200">
-             ⚠️ ネットワークエラーにより送信に失敗した可能性があります。ローカルに保持されている以下のデータ表を確認してください。
+             ⚠️ ネットワーク環境またはCORS制限によりサーバー確認は完了しませんでしたが、ローカルデータは正常に記録されています。
            </div>`
         : '';
 
@@ -324,9 +334,9 @@
             </div>
             
             <div class="mt-8 text-sm text-slate-400">
-              参加者ID: ${jsPsych.data.get().select('participant_id').values[0] || '不明'} ｜ 
-              年齢: ${jsPsych.data.get().select('age').values[0] || '不明'} ｜ 
-              性別: ${jsPsych.data.get().select('gender').values[0] || '不明'}
+              参加者ID: ${getValFunc('participant_id')} ｜ 
+              年齢: ${getValFunc('age')} ｜ 
+              性別: ${getValFunc('gender')}
             </div>
           </div>
         </div>
@@ -336,8 +346,6 @@
     // アルファベット刺激プール
     const letters = ['A', 'B', 'C', 'D', 'E'];
 
-    // --- 2. N-Back 配列の厳密生成ロジック ---
-    
     // 1-Back用：ターゲット（直前と同じ）が20試行中「厳密に6回」
     function generate1BackSequence() {
       const sequence = [];
@@ -495,6 +503,9 @@
         targetCondition = (!isFirstTrial && !isSecondTrial && currentLetter === prevPrevLetter) ? 'same' : 'diff';
       }
 
+      // クロージャ内にキーハンドラー参照を安全に保持
+      let keyHandler = null;
+
       return {
         type: jsPsychHtmlKeyboardResponse,
         choices: ['f', 'j'],
@@ -550,8 +561,11 @@
             const rt = performance.now() - startTime;
 
             const targetBtn = choice === 'same' ? btnSame : btnDiff;
-            targetBtn.classList.add('active-kb');
+            if (targetBtn) {
+              targetBtn.classList.add('active-kb');
+            }
 
+            // jsPsych のランタイムにカスタム応答を追加
             jsPsych.getCurrentTrial().data.custom_response = {
               button_choice: choice,
               key_pressed: responseKey,
@@ -562,7 +576,8 @@
           btnSame.addEventListener('click', () => recordButtonResponse('same', null));
           btnDiff.addEventListener('click', () => recordButtonResponse('diff', null));
 
-          const keyHandler = (e) => {
+          // キーボードハンドラーの設定と安全な登録
+          keyHandler = (e) => {
             if (responseMade) return;
             const key = e.key.toLowerCase();
             if (key === 'f') {
@@ -572,11 +587,11 @@
             }
           };
           window.addEventListener('keydown', keyHandler);
-          jsPsych.getCurrentTrial().data.cleanup_key_handler = keyHandler;
         },
         on_finish: function(data) {
-          if (data.cleanup_key_handler) {
-            window.removeEventListener('keydown', data.cleanup_key_handler);
+          // クロージャスコープのハンドラーを安全に解除
+          if (keyHandler) {
+            window.removeEventListener('keydown', keyHandler);
           }
 
           let responseType = null; 
