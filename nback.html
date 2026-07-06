@@ -95,6 +95,13 @@
       background-color: #b91c1c;
       transform: scale(0.95);
     }
+    
+    /* 選択された状態のボタンスタイル */
+    .choice-btn.selected {
+      filter: brightness(0.8);
+      border-width: 4px;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5);
+    }
 
     /* 刺激アルファベットの巨大表示 */
     .stimulus-display {
@@ -286,7 +293,7 @@
       // エラーメッセージ用
       const errorNotice = hasError 
         ? `<div class="bg-red-50 text-red-700 p-4 rounded-xl mb-6 text-sm border border-red-200">
-             ⚠️ ネットワーク環境またはCORS制限によりサーバー確認は完了しませんでしたが、ローカルデータは正常に記録されています。
+              ⚠️ ネットワーク環境またはCORS制限によりサーバー確認は完了しませんでしたが、ローカルデータは正常に記録されています。
            </div>`
         : '';
 
@@ -503,19 +510,20 @@
         targetCondition = (!isFirstTrial && !isSecondTrial && currentLetter === prevPrevLetter) ? 'same' : 'diff';
       }
 
-      // クロージャ内にキーハンドラー参照を安全に保持
       let keyHandler = null;
+      let trialResponse = null; // 【修正】試行ごとの回答データを確実に保持するクロージャ変数
 
       return {
         type: jsPsychHtmlKeyboardResponse,
+        // 表示ペースを一定にするため、キー入力で即時終了（response_ends_trial）を false に設定。
         choices: ['f', 'j'],
-        trial_duration: 2000,
-        response_ends_trial: false,
+        trial_duration: 2500, // 1試行あたり2.5秒で固定
+        response_ends_trial: false, 
         stimulus: function() {
           const conditionLabel = condition === '1-back' ? '1つ前と同じか？' : '2つ前と同じか？';
           return `
             <div class="flex flex-col items-center justify-center w-full max-w-lg px-4 select-none">
-              <!-- 操作ガイド（上部に目立たないグレーで配置） -->
+              <!-- 操作ガイド -->
               <div class="guide-banner w-full text-center">
                 <span class="font-bold text-blue-600 mr-2">[${condition.toUpperCase()} 課題]</span>
                 <span>${conditionLabel} </span>
@@ -555,28 +563,31 @@
           const btnSame = document.getElementById('btn-choice-same');
           const btnDiff = document.getElementById('btn-choice-diff');
 
+          // 回答を記録する関数（回答しても画面はすぐには切り替わらず、2.5秒待機する）
           function recordButtonResponse(choice, responseKey) {
             if (responseMade) return;
             responseMade = true;
             const rt = performance.now() - startTime;
 
+            // 押されたボタンに視覚的フィードバック（選択中のスタイル）を追加
             const targetBtn = choice === 'same' ? btnSame : btnDiff;
             if (targetBtn) {
-              targetBtn.classList.add('active-kb');
+              targetBtn.classList.add('selected');
             }
 
-            // jsPsych のランタイムにカスタム応答を追加
-            jsPsych.getCurrentTrial().data.custom_response = {
+            // 【修正】TypeErrorを回避するため、jsPsych内部の直接参照を止め、安全なローカル変数にデータを書き出す
+            trialResponse = {
               button_choice: choice,
               key_pressed: responseKey,
               rt: rt
             };
           }
 
+          // マウス/タップイベント
           btnSame.addEventListener('click', () => recordButtonResponse('same', null));
           btnDiff.addEventListener('click', () => recordButtonResponse('diff', null));
 
-          // キーボードハンドラーの設定と安全な登録
+          // キーボードイベントハンドラ
           keyHandler = (e) => {
             if (responseMade) return;
             const key = e.key.toLowerCase();
@@ -589,7 +600,7 @@
           window.addEventListener('keydown', keyHandler);
         },
         on_finish: function(data) {
-          // クロージャスコープのハンドラーを安全に解除
+          // メモリリークおよびキー重複イベントを防ぐため、確実にリスナーを削除
           if (keyHandler) {
             window.removeEventListener('keydown', keyHandler);
           }
@@ -597,6 +608,7 @@
           let responseType = null; 
           let responseRt = null;
 
+          // キーボード標準ハンドラの処理
           if (data.response) {
             const key = data.response.toLowerCase();
             if (key === 'f') responseType = 'same';
@@ -604,9 +616,10 @@
             responseRt = data.rt;
           }
 
-          if (data.custom_response) {
-            responseType = data.custom_response.button_choice;
-            responseRt = data.custom_response.rt;
+          // 【修正】記録されたカスタムレスポンスがクロージャ変数にあれば、それを最優先で上書きする
+          if (trialResponse) {
+            responseType = trialResponse.button_choice;
+            responseRt = trialResponse.rt;
           }
 
           let correct = false;
