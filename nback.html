@@ -2,8 +2,8 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>1-Back & 2-Back ワーキングメモリ課題</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>1-Back & 2-Back ワーキングメモリ課題 (スマホ対応版)</title>
   
   <!-- jsPsych core library and CSS -->
   <script src="https://unpkg.com/jspsych@7.3.4"></script>
@@ -27,6 +27,7 @@
       line-height: 1.8;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent; /* スマホのタップ時の青いハイライトを消す */
     }
     
     .jspsych-display-element {
@@ -35,7 +36,7 @@
 
     /* 教示文の文字サイズと可読性向上 */
     .instruction-text {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       max-width: 650px;
       margin: 0 auto 1.5rem auto;
       text-align: left;
@@ -53,6 +54,7 @@
       box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
       transition: all 0.2s;
       cursor: pointer;
+      touch-action: manipulation;
     }
     .btn-custom:hover {
       background-color: #2563eb;
@@ -65,41 +67,49 @@
 
     /* 回答ボタン（「同じ」「違う」）の巨大デザイン */
     .choice-btn {
-      width: 140px;
-      height: 70px;
-      font-size: 1.25rem;
+      flex: 1;
+      max-width: 180px;
+      height: 75px;
+      font-size: 1.35rem;
       font-weight: bold;
-      border-radius: 12px;
-      margin: 0 12px;
+      border-radius: 16px;
+      margin: 0 8px;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.1s ease;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      touch-action: manipulation; /* スマホのダブルタップズーム遅延を防止 */
+      user-select: none;
     }
     .choice-btn-same {
       background-color: #10b981;
       color: white;
-      border: 2px solid #059669;
+      border: 3px solid #059669;
+      box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
     }
-    .choice-btn-same:active, .choice-btn-same.active-kb {
+    .choice-btn-same:active, .choice-btn-same.active-touch {
       background-color: #047857;
-      transform: scale(0.95);
+      transform: scale(0.92);
+      box-shadow: none;
     }
     .choice-btn-diff {
       background-color: #ef4444;
       color: white;
-      border: 2px solid #dc2626;
+      border: 3px solid #dc2626;
+      box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
     }
-    .choice-btn-diff:active, .choice-btn-diff.active-kb {
+    .choice-btn-diff:active, .choice-btn-diff.active-touch {
       background-color: #b91c1c;
-      transform: scale(0.95);
+      transform: scale(0.92);
+      box-shadow: none;
     }
     
-    /* 選択された状態のボタンスタイル */
+    /* 選択された状態のボタンスタイル（タッチ直後に固定される視覚フィードバック） */
     .choice-btn.selected {
-      filter: brightness(0.8);
-      border-width: 4px;
+      filter: brightness(0.75);
+      border-width: 5px;
+      border-color: #1e293b;
       box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5);
     }
 
@@ -292,21 +302,21 @@
 
       // エラーメッセージ用
       const errorNotice = hasError 
-        ? `<div class="bg-red-50 text-red-700 p-4 rounded-xl mb-6 text-sm border border-red-200">
+        ? `<div class="bg-red-50 text-red-700 p-4 rounded-xl mb-6 text-sm border border-red-200 text-center">
               ⚠️ ネットワーク環境またはCORS制限によりサーバー確認は完了しませんでしたが、ローカルデータは正常に記録されています。
            </div>`
         : '';
 
       displayElement.innerHTML = `
-        <div class="flex flex-col items-center py-10 px-4 w-full max-w-4xl">
-          <div class="bg-white p-8 rounded-2xl shadow-md w-full border border-slate-100 text-center">
-            <h2 class="text-3xl font-extrabold text-emerald-600 mb-2">実験終了。ご協力ありがとうございました。</h2>
-            <p class="text-slate-500 mb-6">データは無事に自動送信されました。以下が今回の実験結果です。</p>
+        <div class="flex flex-col items-center py-6 px-4 w-full max-w-4xl">
+          <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-md w-full border border-slate-100 text-center">
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-emerald-600 mb-2">実験終了。ご協力ありがとうございました。</h2>
+            <p class="text-slate-500 mb-6 text-sm sm:text-base">データは無事に自動送信されました。以下が今回の実験結果です。</p>
 
             ${errorNotice}
 
             <!-- 各条件別の正答率サマリー -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
               <div class="bg-blue-50 p-5 rounded-xl border border-blue-100">
                 <span class="text-sm text-blue-600 block font-bold">前半：1-Back 課題</span>
                 <span class="text-3xl font-black text-blue-900">${acc1Back} %</span>
@@ -320,9 +330,9 @@
             </div>
 
             <!-- 収集された全データのテーブル表示 -->
-            <h3 class="text-xl font-bold text-slate-700 text-left mb-3">統合試行ログ一覧 (データ検品用)</h3>
-            <div class="overflow-y-auto max-h-[450px] w-full border border-slate-200 rounded-lg">
-              <table class="feedback-table">
+            <h3 class="text-lg font-bold text-slate-700 text-left mb-3">統合試行ログ一覧</h3>
+            <div class="overflow-x-auto overflow-y-auto max-h-[400px] w-full border border-slate-200 rounded-lg">
+              <table class="feedback-table min-w-[600px]">
                 <thead class="sticky top-0 z-10">
                   <tr>
                     <th>条件</th>
@@ -340,7 +350,7 @@
               </table>
             </div>
             
-            <div class="mt-8 text-sm text-slate-400">
+            <div class="mt-8 text-xs text-slate-400">
               参加者ID: ${getValFunc('participant_id')} ｜ 
               年齢: ${getValFunc('age')} ｜ 
               性別: ${getValFunc('gender')}
@@ -472,22 +482,22 @@
       stimulus: `
         <div class="text-center px-4 max-w-2xl">
           <span class="inline-block bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full font-bold mb-3">前半セッション</span>
-          <h2 class="text-3xl font-extrabold text-blue-600 mb-6">1-Back 課題のルール</h2>
-          <div class="instruction-text bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-            <p>画面の真ん中に <strong>A, B, C, D, E</strong> のいずれかの文字が1つずつ、順番に表示されます。</p>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-blue-600 mb-4">1-Back 課題のルール</h2>
+          <div class="instruction-text bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <p>画面の真ん主に <strong>A, B, C, D, E</strong> のいずれかの文字が1つずつ、順番に表示されます。</p>
             <p>今表示された文字が、<strong class="text-red-500">「1つ前に表示された文字と同じ」</strong>か、それとも<strong class="text-blue-500">「違う」</strong>かを判定してください。</p>
             
-            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
+            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100 text-sm sm:text-base">
               <span class="font-bold text-slate-700">【1-Backの例】</span><br>
-              <span class="text-lg">「 A 」 ➔ 「 B 」 ➔ 「 B 」 と表示された場合</span><br>
+              <span class="text-base">「 A 」 ➔ 「 B 」 ➔ 「 B 」 と表示された場合</span><br>
               <ul class="list-disc pl-6 mt-2 text-sm text-slate-600 space-y-1">
                 <li>2文字目の「B」：1つ前の「A」と違うので <strong class="text-red-500">違う</strong></li>
                 <li>3文字目の「B」：1つ前の「B」と同じなので <strong class="text-emerald-600">同じ</strong> と回答します。</li>
               </ul>
             </div>
-            <p class="text-sm text-slate-500">※ 最初の1文字目は「1つ前」がないため、回答はすべて「違う」と判断してください。</p>
+            <p class="text-xs sm:text-sm text-slate-500">※ 最初の1文字目は「1つ前」がないため、回答はすべて「違う」と判断してください。</p>
           </div>
-          <p class="text-slate-600 font-semibold mb-6">準備ができたら、下のボタンを押して始めてください。</p>
+          <p class="text-slate-600 text-sm sm:text-base font-semibold mb-6">準備ができたら、下のボタンを押して始めてください。</p>
         </div>
       `,
       choices: ['1-Back課題を開始する'],
@@ -511,11 +521,10 @@
       }
 
       let keyHandler = null;
-      let trialResponse = null; // 【修正】試行ごとの回答データを確実に保持するクロージャ変数
+      let trialResponse = null;
 
       return {
         type: jsPsychHtmlKeyboardResponse,
-        // 表示ペースを一定にするため、キー入力で即時終了（response_ends_trial）を false に設定。
         choices: ['f', 'j'],
         trial_duration: 2500, // 1試行あたり2.5秒で固定
         response_ends_trial: false, 
@@ -524,11 +533,11 @@
           return `
             <div class="flex flex-col items-center justify-center w-full max-w-lg px-4 select-none">
               <!-- 操作ガイド -->
-              <div class="guide-banner w-full text-center">
-                <span class="font-bold text-blue-600 mr-2">[${condition.toUpperCase()} 課題]</span>
+              <div class="guide-banner w-full text-center text-xs sm:text-sm">
+                <span class="font-bold text-blue-600 mr-1">[${condition.toUpperCase()} 課題]</span>
                 <span>${conditionLabel} </span>
-                <span class="inline-block bg-slate-100 px-2 py-0.5 rounded text-slate-700 ml-1">Fキー ➔ 同じ</span>
-                <span class="inline-block bg-slate-100 px-2 py-0.5 rounded text-slate-700 ml-1">Jキー ➔ 違う</span>
+                <span class="hidden sm:inline-block bg-slate-100 px-2 py-0.5 rounded text-slate-700 ml-1">Fキー ➔ 同じ</span>
+                <span class="hidden sm:inline-block bg-slate-100 px-2 py-0.5 rounded text-slate-700 ml-1">Jキー ➔ 違う</span>
               </div>
 
               <!-- 刺激アルファベット表示 -->
@@ -536,8 +545,8 @@
                 ${currentLetter}
               </div>
 
-              <!-- 画面タップ用の巨大ボタン（スマホ対応） -->
-              <div class="flex justify-center w-full mt-4">
+              <!-- 画面タップ用の巨大ボタン（スマホ/タッチ対応・レスポンシブ） -->
+              <div class="flex justify-center w-full max-w-[360px] mx-auto mt-4">
                 <button type="button" id="btn-choice-same" class="choice-btn choice-btn-same">
                   同じ
                 </button>
@@ -563,19 +572,19 @@
           const btnSame = document.getElementById('btn-choice-same');
           const btnDiff = document.getElementById('btn-choice-diff');
 
-          // 回答を記録する関数（回答しても画面はすぐには切り替わらず、2.5秒待機する）
-          function recordButtonResponse(choice, responseKey) {
+          // 回答を記録する関数（回答後も2.5秒は保持される）
+          function recordResponse(choice, responseKey) {
             if (responseMade) return;
             responseMade = true;
             const rt = performance.now() - startTime;
 
-            // 押されたボタンに視覚的フィードバック（選択中のスタイル）を追加
+            // 押されたボタンに視覚的フィードバック（選択中スタイル）を付加
             const targetBtn = choice === 'same' ? btnSame : btnDiff;
             if (targetBtn) {
               targetBtn.classList.add('selected');
             }
 
-            // 【修正】TypeErrorを回避するため、jsPsych内部の直接参照を止め、安全なローカル変数にデータを書き出す
+            // 安全な変数領域へ書き出す
             trialResponse = {
               button_choice: choice,
               key_pressed: responseKey,
@@ -583,24 +592,40 @@
             };
           }
 
-          // マウス/タップイベント
-          btnSame.addEventListener('click', () => recordButtonResponse('same', null));
-          btnDiff.addEventListener('click', () => recordButtonResponse('diff', null));
+          // タッチ端末での遅延をなくすため 'touchstart' と 'click' の両方を監視
+          const handleSameTouch = (e) => {
+            e.preventDefault(); // タップ時のスクロール/二重反応を防止
+            recordResponse('same', null);
+          };
+          const handleDiffTouch = (e) => {
+            e.preventDefault();
+            recordResponse('diff', null);
+          };
 
-          // キーボードイベントハンドラ
+          if (btnSame && btnDiff) {
+            // タッチ操作用（スマホ）
+            btnSame.addEventListener('touchstart', handleSameTouch, { passive: false });
+            btnDiff.addEventListener('touchstart', handleDiffTouch, { passive: false });
+
+            // マウス操作用（PC確認用）
+            btnSame.addEventListener('click', () => recordResponse('same', null));
+            btnDiff.addEventListener('click', () => recordResponse('diff', null));
+          }
+
+          // キーボード操作用のイベントリスナー
           keyHandler = (e) => {
             if (responseMade) return;
             const key = e.key.toLowerCase();
             if (key === 'f') {
-              recordButtonResponse('same', 'f');
+              recordResponse('same', 'f');
             } else if (key === 'j') {
-              recordButtonResponse('diff', 'j');
+              recordResponse('diff', 'j');
             }
           };
           window.addEventListener('keydown', keyHandler);
         },
         on_finish: function(data) {
-          // メモリリークおよびキー重複イベントを防ぐため、確実にリスナーを削除
+          // イベントリスナーのメモリリークを確実に防止
           if (keyHandler) {
             window.removeEventListener('keydown', keyHandler);
           }
@@ -608,7 +633,7 @@
           let responseType = null; 
           let responseRt = null;
 
-          // キーボード標準ハンドラの処理
+          // キーボードの標準認識処理
           if (data.response) {
             const key = data.response.toLowerCase();
             if (key === 'f') responseType = 'same';
@@ -616,7 +641,7 @@
             responseRt = data.rt;
           }
 
-          // 【修正】記録されたカスタムレスポンスがクロージャ変数にあれば、それを最優先で上書きする
+          // タップまたはタッチで応答があった場合は、それを最優先で上書き
           if (trialResponse) {
             responseType = trialResponse.button_choice;
             responseRt = trialResponse.rt;
@@ -650,27 +675,27 @@
       stimulus: `
         <div class="text-center px-4 max-w-2xl">
           <span class="inline-block bg-orange-100 text-orange-800 text-sm px-3 py-1 rounded-full font-bold mb-3">後半セッション</span>
-          <h2 class="text-3xl font-extrabold text-orange-600 mb-4">前半終了です！少し休憩しましょう</h2>
-          <p class="text-slate-500 mb-6">お疲れ様でした。呼吸を整えたら、後半のルール説明を読んでください。</p>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-orange-600 mb-4">前半終了です！少し休憩しましょう</h2>
+          <p class="text-slate-500 mb-6 text-sm sm:text-base">お疲れ様でした。呼吸を整えたら、後半のルール説明を読んでください。</p>
           
-          <div class="instruction-text bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-            <h4 class="font-bold text-slate-800 text-lg">⚠️ 後半からはルールが変わります：【2-Back 課題】</h4>
+          <div class="instruction-text bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <h4 class="font-bold text-slate-800 text-base sm:text-lg">⚠️ 後半からはルールが変わります：【2-Back 課題】</h4>
             <p>ここからは、今表示された文字が、<strong class="text-red-500">「2つ前に表示された文字と同じ」</strong>か、それとも<strong class="text-blue-500">「違う」</strong>かを判定してください。</p>
             
-            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
+            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100 text-sm sm:text-base">
               <span class="font-bold text-slate-700">【2-Backの例】</span><br>
-              <span class="text-lg">「 A 」 ➔ 「 B 」 ➔ 「 A 」 と表示された場合</span><br>
+              <span class="text-base">「 A 」 ➔ 「 B 」 ➔ 「 A 」 と表示された場合</span><br>
               <ul class="list-disc pl-6 mt-2 text-sm text-slate-600 space-y-1">
                 <li>3文字目の「A」：2つ前の「A」と同じなので <strong class="text-emerald-600">同じ</strong> と回答します。</li>
               </ul>
-              <span class="text-lg mt-2 inline-block">「 A 」 ➔ 「 B 」 ➔ 「 C 」 と表示された場合</span><br>
+              <span class="text-base mt-2 inline-block">「 A 」 ➔ 「 B 」 ➔ 「 C 」 と表示された場合</span><br>
               <ul class="list-disc pl-6 mt-2 text-sm text-slate-600 space-y-1">
                 <li>3文字目の「C」：2つ前の「A」と違うので <strong class="text-red-500">違う</strong> と回答します。</li>
               </ul>
             </div>
-            <p class="text-sm text-slate-500">※ 最初の1文字目と2文字目は比較する「2つ前」がないため、回答はすべて「違う」と判断してください。</p>
+            <p class="text-xs sm:text-sm text-slate-500">※ 最初の1文字目と2文字目は比較する「2つ前」がないため、回答はすべて「違う」と判断してください。</p>
           </div>
-          <p class="text-slate-600 font-semibold mb-6">準備ができたら、下のボタンを押して始めてください。</p>
+          <p class="text-slate-600 text-sm sm:text-base font-semibold mb-6">準備ができたら、下のボタンを押して始めてください。</p>
         </div>
       `,
       choices: ['2-Back課題を開始する'],
