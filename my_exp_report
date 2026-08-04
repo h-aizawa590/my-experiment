@@ -1,0 +1,56 @@
+---
+title: "ストループ"
+author: "相澤脩貴"
+format: html
+editor: visual
+bibliography: references.bib
+---
+
+1.  目的 (Introduction) 本研究では、ストループ効果について検討する。ストループ効果とは…（[@stroop1935a]）。 本実験の仮説は「不一致条件は一致条件よりも反応時間が長くなる」とした。
+
+2.  方法 (Method)
+
+参加者 10名のデータを収集した。
+
+装置と材料 オンライン実験プラットフォーム（jsPsych）を使用し…
+
+手続き 実験で参加者は…
+
+## 3. 結果 (Results)
+
+以下の通り、対応のあるt検定を行った。（前回の授業でGeminiに生成させたレポートを貼り付けてもOK）
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+library(tidyverse)
+
+# 1. CSVデータの読み込み
+data <- read_csv("dummy_t_test.csv")
+
+# 2. 条件ごとに rt をベクトルとして抽出
+rt_congruent <- data %>%
+  filter(condition == "congruent") %>%
+  pull(rt)
+
+rt_incongruent <- data %>%
+  filter(condition == "incongruent") %>%
+  pull(rt)
+
+# 3. 対応のあるt検定（paired t-test）の実行
+t_test_result <- t.test(rt_congruent, rt_incongruent, paired = TRUE)
+
+# 4. 結果をコンソールに出力
+print(t_test_result)
+
+```
+
+）
+
+4.  考察 (Discussion) 分析の結果、仮説は（支持された / 支持されなかった）。 この理由は……。また、本実験の限界として……が挙げられる。
+
+## 5. 引用文献 (References)
+
+## 
